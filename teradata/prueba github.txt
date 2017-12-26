@@ -1,7 +1,11 @@
 --Prueba repositorio con Teradata
 sel * from p_views.banco
 where cod_banco=72
+<<<<<<< HEAD
 ---agrego un comentario
 ---otro comentario
 ---Comentario guille
 sel * from p_views.cuenta
+=======
+---agrego un comentario
+>>>>>>> parent of 7ee63d3... otro comentario
