@@ -1,0 +1,2 @@
+--Prueba repositorio con Teradata
+sel * from p_views.banco
