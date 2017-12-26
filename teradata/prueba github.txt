@@ -1,3 +1,4 @@
 --Prueba repositorio con Teradata
 sel * from p_views.banco
 where cod_banco=72
+---agrego un comentario
