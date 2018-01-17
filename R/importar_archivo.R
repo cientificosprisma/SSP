@@ -1,6 +1,4 @@
 # Este script importa el archivo para predecir el mes corriente y lo escribe
-rm(list = ls())
-gc()
 
 # Importar archivo --------------------------------------------------------
 rm(list = ls())
