@@ -48,7 +48,7 @@ save_mapping <- function(df){
   }
   
   for (i in col_idx){
-    assign(paste0("col_key_",i),sort(unique(input_modelo[,i])))
+    assign(paste0("col_key_",i),sort(unique(df[,i])))
     len <- length(get(paste0("col_key_",i)))
     vector <- 1:len
     key_value <- data.frame(key = get(paste0("col_key_",i)), value = vector)
@@ -64,7 +64,7 @@ map_factors <- function(df){
   
   for (i in 1:ncol(df)){
     
-    if (typeof(input_modelo[,i])=="character"){
+    if (typeof(df[,i])=="character"){
       col_idx <- c(col_idx,i)
     }
   }
@@ -85,7 +85,7 @@ map_factors <- function(df){
 
 # Funcion que genera la matriz para xgboost -------------------------------
 
-get_xgboost_matrix <- function(df, clase){
+get_xgboost_matrix <- function(df){
 
   # partition es == 1 si se splitea en train y test y partition == 2 si se splitea en train, test y calibration
     
@@ -95,15 +95,14 @@ get_xgboost_matrix <- function(df, clase){
     
     ## Me quedo con los is.na(clase) == FALSE
     
-    dt <- dt[is.na(get(clase)) == FALSE]
+    dt <- dt[is.na(clase) == FALSE]
     
-    colnames(dt) <- str_replace(colnames(df),"\\$","__")
+    colnames(dt) <- str_replace(colnames(dt),"\\$","__")
     
-    #Hay dos columnas que falta acomodar
+    dt <- dt[,lapply(.SD,as.numeric)] %>% as.matrix
     
-    dtMatrix <- dt[,lapply(.SD,as.numeric)] %>% as.matrix
-    
-    dt <- dt %>% mutate(clase = as.factor(get(clase)))
+    dt <- as.data.frame(dt)
+    dt$clase <- as.factor(dt$clase)
     
     return(dt)
 
@@ -142,17 +141,17 @@ get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
 
 # Funcion que lee info historia o actual ----------------------------------
 
-read_info <- function(filename, type){
+read_info <- function(filename, type, n_rows = -1L){
   
   library(data.table)
   col_classes <- readRDS(paste0(dir_configuracion_columnas,"col_classes.RDS"))
   
   # type puede ser "actual" o "historia"
   if (tolower(type) == "actual"){
-    df <- fread(paste0(dir_info_actual,filename), colClasses = col_classes)
+    df <- fread(paste0(dir_info_actual,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = FALSE, data.table = FALSE)
   } else{
     if (tolower(type) == "historia"){
-      df <- fread(paste0(dir_info_historia,filename), colClasses = col_classes)
+      df <- fread(paste0(dir_info_historia,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = FALSE, data.table = FALSE)
     } else{
       print("Parametro incorrecto!")
     } 
