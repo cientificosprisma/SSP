@@ -42,7 +42,7 @@ save_mapping <- function(df){
   
   for (i in 1:ncol(df)){
     
-    if (typeof(input_modelo[,i])=="character"){
+    if (typeof(df[,i])=="character"){
       col_idx <- c(col_idx,i)
     }
   }
@@ -85,8 +85,6 @@ map_factors <- function(df){
 
 # Funcion que genera la matriz para xgboost -------------------------------
 
-## Importa mp_entrenar y devuelve un df preparado para xgboost, para pasarselo al task de MLR
-
 get_xgboost_matrix <- function(df, clase){
 
   # partition es == 1 si se splitea en train y test y partition == 2 si se splitea en train, test y calibration
@@ -112,13 +110,15 @@ get_xgboost_matrix <- function(df, clase){
 }
 
 
+# Funcion que arma split entre train, test y calibration ------------------
+
 get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
   library(dplyr)
   
   #se usa como train el último mes
-  train<- df %>% filter(cod_mes!=max(df$cod_mes))
+  train<- df %>% filter(Cod_Mes!=max(df$Cod_Mes))
   #se usa como test y calibración los meses anteriores al último
-  test <- df %>% filter(cod_mes==max(df$cod_mes))
+  test <- df %>% filter(Cod_Mes==max(df$Cod_Mes))
   results <- list(train,test)
   
   
@@ -137,4 +137,25 @@ get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
   }
   
   return(results)
+}
+
+
+# Funcion que lee info historia o actual ----------------------------------
+
+read_info <- function(filename, type){
+  
+  library(data.table)
+  col_classes <- readRDS(paste0(dir_configuracion_columnas,"col_classes.RDS"))
+  
+  # type puede ser "actual" o "historia"
+  if (tolower(type) == "actual"){
+    df <- fread(paste0(dir_info_actual,filename), colClasses = col_classes)
+  } else{
+    if (tolower(type) == "historia"){
+      df <- fread(paste0(dir_info_historia,filename), colClasses = col_classes)
+    } else{
+      print("Parametro incorrecto!")
+    } 
+  }
+  return(df)
 }
