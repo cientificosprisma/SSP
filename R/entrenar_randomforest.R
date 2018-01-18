@@ -13,6 +13,7 @@ gc()
 library(mlr)
 library(dplyr)
 library(mlrMBO)
+library(ranger)
 
 set.seed(12112016)
 
@@ -21,11 +22,24 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
 
-df <- read_info("input_modelo_2018_1.csv","historia", 1000,strings_As_Factors=TRUE)
-
+df <- read_info("input_modelo_2018_1.csv","historia", 1000,strings_as_factors=FALSE)
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
 df[is.na(df)]<-(-99999)
+df[,"Cod_Mes"]<-as.integer(df[,"Cod_Mes"])
+
+###### CREAR FUNCION #####
+library(data.table)
+library(stringr)
+dt <- as.data.table(df)
+
+dt <- dt[is.na(clase) == FALSE]
+
+colnames(dt) <- str_replace(colnames(dt),"\\$","__")
+
+df <- as.data.frame(dt)
+
+#######
 
 # Partimos en train y test ------------------------------------------------
 df <- get_train_test(df)
@@ -41,27 +55,22 @@ rm(df)
 
 df <- rbind(train, test)
 
-rm(train)
-rm(test)
+#rm(train)
+#rm(test)
 gc()
 
-###### CREAR FUNCION #####
-library(data.table)
-library(stringr)
-dt <- as.data.table(df)
 
-dt <- dt[is.na(clase) == FALSE]
-
-colnames(dt) <- str_replace(colnames(dt),"\\$","__")
-
-df <- as.data.frame(dt)
-
-#######
 
 # Task, Learner, metodo de sampleo --------------------------------------------------------------
 
+for(c in 1:ncol(df)){
+  if(typeof(df[,c])=="character"){df[,c]<-as.factor(df[,c])}
+  
+}
+df[,"clase"]<-as.factor(df[,"clase"])
 
-task = makeClassifTask(data = df, target = "clase")
+#df$Cod_Tipo_Cuenta <- as.factor(as.character(df$Cod_Tipo_Cuenta))
+task = makeClassifTask(data = df, target = "clase", fixup.data = "no")
 
 train_inds = seq(1:train_rows)
 test_inds = seq((train_rows+1),nrow(df))
@@ -69,14 +78,18 @@ test_inds = seq((train_rows+1),nrow(df))
 sampling_method = makeFixedHoldoutInstance(train_inds, test_inds, nrow(df))
 
 # Armo learner y sus parametros
-randomforest_learner <- makeLearner("classif.h2o.randomForest", predict.type = "prob", fix.factors.prediction = TRUE)
+
+
+randomforest_learner <- makeLearner("classif.ranger", predict.type = "prob",fix.factors.prediction = TRUE)
+
+randomforest_learner$par.vals<- list(num.threads =12 )
+
+
 
 #randomforest_learner$par.set
 randomforest_params <- makeParamSet(
-  makeIntegerParam("ntrees",lower=400,upper=600),
-  makeIntegerParam("mtries", lower = 10, upper = 30, default = 15)
-  #,makeIntegerParam("nodesize",lower= nrow(df)*0.05 ,upper=nrow(df)*0.30
-       #            )
+  makeIntegerParam("num.trees",lower=400,upper=600),
+  makeIntegerParam("mtry", lower = 10, upper = 30, default = 15)
   )
 
 
@@ -104,26 +117,39 @@ rf_tune <-
     show.info = TRUE
   )
 
-opt_results <- as.data.frame(xgTune$opt.path)
-write.csv(opt_results, paste0(dir_performance_modelos_pruebas,"xgboost_", cod_mes,".csv"), row.names = FALSE)
+opt_results <- as.data.frame(rf_tune$opt.path)
+cod_mes<-max(df$Cod_Mes)
+
+#str(df)
+
+write.csv(opt_results, paste0(dir_performance_modelos_pruebas,"randomforest_", cod_mes,".csv"), row.names = FALSE)
 
 # Elijo los mejores parametros y entreno--------------------------------------------
+#str(df)
 
-xg_new <- setHyperPars(learner = xgboost_learner, par.vals = xg_tune$x)
-train_task <- makeClassifTask(data = df[train_inds,], target = "clase")
-xg_model <- train(xg_new, train_task)
+
+rf_new <- setHyperPars(learner = randomforest_learner, par.vals = rf_tune$x)
+train_task <- makeClassifTask(data = df, target = "clase" ,fixup.data = "no")
+rf_model <- train(rf_new, train_task)
 
 # Predigo test ----------------------------------------------
 
-predict_task <- makeClassifTask(data =  df[test_inds,], target = "clase")
-predict_test <- predict(xg_model, predict_task)
+for(c in 1:ncol(test)){
+  if(typeof(test[,c])=="character"){test[,c]<-as.factor(test[,c])}
+  
+}
+test[,"clase"]<-as.factor(test[,"clase"])
 
 
+predict_task <- makeClassifTask(data =  test, target = "clase",fixup.data = "no")
+predict_test <- predict(rf_model, predict_task)
+
+#df$Cod_Limite_Compra[which(is.na(df$Cod_Limite_Compra))]
 
 perf_measures <- c(acc, auc)
-performance(predict_test,lift)
+performance(predict_test)
 
-var_importance <- getFeatureImportance(xgModel)
+var_importance <- getFeatureImportance(rf_model)
 View(as.data.frame(t(var_importance$res)))
 
 # Variables más importantes
