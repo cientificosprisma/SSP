@@ -18,7 +18,7 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
 
-df <- read_info("input_modelo_2018_1.csv","historia", 1000)
+df <- read_info("input_modelo_2018_1.csv","historia")
 
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
@@ -43,10 +43,12 @@ gc()
 
 df <- map_factors(df)
 df <- get_xgboost_matrix(df)
+gc()
 
 # Task, Learner, metodo de sampleo --------------------------------------------------------------
 
 task = makeClassifTask(data = df, target = "clase")
+task = undersample(task, rate = 0.1)
 
 train_inds = seq(1:train_rows)
 test_inds = seq((train_rows+1),nrow(df))
@@ -69,10 +71,10 @@ xgboost_params <- makeParamSet(
 
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
-# mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,50,75,99),save.file.path = paste0(dir_performance_modelos_pruebas,"parametros_",cod_mes,".RData"))
+mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,50,75,99),save.file.path = paste0(dir_performance_modelos_pruebas,"xgboost_parametros_1.RData"))
 mbo_control <- makeMBOControl()
 # Extends an MBO control object with infill criteria and infill optimizer options
-mbo_control <- setMBOControlTermination(mbo_control, iters = 5)
+mbo_control <- setMBOControlTermination(mbo_control, iters = 80)
 
 # Defining surrogate learner
 surrogate_lrn <- makeLearner("regr.km", predict.type = "se")
