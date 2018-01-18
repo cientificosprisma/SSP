@@ -110,3 +110,31 @@ get_xgboost_matrix <- function(df, clase){
     return(dt)
 
 }
+
+
+get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
+  library(dplyr)
+  
+  #se usa como train el último mes
+  train<- df %>% filter(cod_mes!=max(df$cod_mes))
+  #se usa como test y calibración los meses anteriores al último
+  test <- df %>% filter(cod_mes==max(df$cod_mes))
+  results <- list(train,test)
+  
+  
+  if(calibration_flag){
+    
+    split_sample<-round(nrow(test)*factor_sample)
+    #shuffle
+    test<-sample_n(test,nrow(test))
+    #Se crea calibracion 
+    calibration<-test[(split_sample+1):nrow(test),]
+    #Se crea Test
+    test<-test[1:split_sample,]
+    
+    results <- list(train,test,calibration)
+    
+  }
+  
+  return(results)
+}
