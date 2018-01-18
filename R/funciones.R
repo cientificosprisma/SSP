@@ -141,17 +141,17 @@ get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
 
 # Funcion que lee info historia o actual ----------------------------------
 
-read_info <- function(filename, type, n_rows = -1L){
+read_info <- function(filename, type, n_rows = -1L,strings_as_factors=FALSE ){
   
   library(data.table)
   col_classes <- readRDS(paste0(dir_configuracion_columnas,"col_classes.RDS"))
   
   # type puede ser "actual" o "historia"
   if (tolower(type) == "actual"){
-    df <- fread(paste0(dir_info_actual,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = FALSE, data.table = FALSE)
+    df <- fread(paste0(dir_info_actual,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = strings_as_factors, data.table = FALSE)
   } else{
     if (tolower(type) == "historia"){
-      df <- fread(paste0(dir_info_historia,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = FALSE, data.table = FALSE)
+      df <- fread(paste0(dir_info_historia,filename), colClasses = col_classes, nrows = n_rows, stringsAsFactors = strings_as_factors, data.table = FALSE)
     } else{
       print("Parametro incorrecto!")
     } 
