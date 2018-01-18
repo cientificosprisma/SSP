@@ -107,64 +107,31 @@ predict_task <- makeClassifTask(data =  df[test_inds,], target = "clase")
 predict_test <- predict(xg_model, predict_task)
 
 
+# Calculo metricas de performance -----------------------------------------
 
-perf_measures <- c(acc, auc)
-performance(predict_test,lift)
+# obtengo predicciones y observaciones
+predictions = predict_test$data$prob.1
+observations = predict_test$data$truth
 
-var_importance <- getFeatureImportance(xgModel)
-View(as.data.frame(t(var_importance$res)))
+# obtengo acc y auc
+perf_measures <- list("acc" = acc, "auc" = auc)
+measures <- performance(predict_test, measures = perf_measures)
 
-# Variables más importantes
-# Pago_Minimo_Impago_30
-# Intereses_Punitorios_Total
-# Score_Riesgo
-# Monto_IVA_Pesos
-# Score_Financiacion
-# marca_pago_minimo_impago_30
-# Intereses_Financiacion_Pesos
+# obtengo ks, para ello le paso el tpr y fpr para distintos puntos de corte
+d = generateThreshVsPerfData(predict_test, measures = list(fpr, tpr))
+measures[3] <- ks(d$data$tpr,d$data$fpr)
+names(measures)[3] <- "ks"
 
+# guardo resultados
 
-# Genero auc y ks ---------------------------------------------------------
+write.csv(measures, paste0(dir_performance_modelos_pruebas,"xgboost_measures_", cod_mes,".csv"), row.names = FALSE)
 
-predictTask <- makeClassifTask(data =  df[test.inds,], target = "clase_veraz")
-predictTest <- predict(xgModel, predictTask)
+# obtengo variable importance
+var_importance <- getFeatureImportance(xg_model)
+var_importance <- as.data.frame(t(var_importance$res))
 
-performance(predictTest, measures = list(auc))
-prd = predictTest$data$prob.1
-act = predictTest$data$truth
+write.csv(var_importance, paste0(dir_performance_modelos_pruebas,"xgboost_var_importance_", cod_mes,".csv"), row.names = FALSE)
 
-# ojo que oculta la funcion performance de mlr
-
-library(ROCR)
-pred<-prediction(prd,act)
-perf <- performance(pred,"tpr","fpr")
-
-#this code builds on ROCR library by taking the max delt
-#between cumulative bad and good rates being plotted by
-#ROCR see https://cran.r-project.org/doc/contrib/Sharma-CreditScoring.pdf
-ks=max(attr(perf,'y.values')[[1]]-attr(perf,'x.values')[[1]])
-plot(perf,main=paste0(' KS=',round(ks*100,1),'%'))
-lines(x = c(0,1),y=c(0,1))
-print(ks);
-
-
-
-
-
-scoreTest <- data.frame(y = predictTest$data$truth, x = predictTest$data$prob.1)
-scoreCalibration <- data.frame(y = predictCalibration$data$truth, x = predictCalibration$data$prob.1)
-
-
-
-
-# Guardo modelos ------------------------------
-saveRDS(logitModel,paste0(fuentes.modelos.actual,"modelo_calibracion_",banco,".RDS"))
-
-saveRDS(logitModel,paste0(fuentes.modelos.historia,"modelo_calibracion_",banco,"_",year,"_",month,".RDS"))       
-
-saveRDS(xgModel,paste0(fuentes.modelos.actual,"modelo_",banco,".RDS"))
-
-saveRDS(xgModel,paste0(fuentes.modelos.historia,"modelo_",banco,"_",year,"_",month,".RDS"))       
 
 
 
