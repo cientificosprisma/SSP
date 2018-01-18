@@ -111,11 +111,26 @@ get_xgboost_matrix <- function(df){
 
 # Funcion que arma split entre train, test y calibration ------------------
 
-get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE){
+get_train_test<-function(df,factor_sample=0.75,calibration_flag=FALSE, undersampling = T){
   library(dplyr)
   
   #se usa como train el último mes
   train<- df %>% filter(Cod_Mes!=max(df$Cod_Mes))
+  
+  if (undersampling == T){
+    
+    train_class_1 <- train %>% filter(clase == 1)
+    rows_train_class_1 <- nrow(train_class_1)
+    
+    train_class_0 <- train %>% filter(clase == 0)
+    train_class_0 <- train_class_0[sample(nrow(train_class_0), rows_train_class_1),]
+    
+    train <- rbind(train_class_0,train_class_1)
+    
+  }
+  
+  
+  
   #se usa como test y calibración los meses anteriores al último
   test <- df %>% filter(Cod_Mes==max(df$Cod_Mes))
   results <- list(train,test)
