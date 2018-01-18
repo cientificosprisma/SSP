@@ -1,5 +1,4 @@
 ## Script que arma directorios
-rm(list = ls())
 
 # Directorios -------------------------------------------------------------
 
@@ -38,15 +37,10 @@ dir_predicciones <- paste0(dir_resultados,"predicciones/")
 # Configuraciones ---------------------------------------------------------
 
 # Usuario y contrasena
-usuario = "vsilecor"
-contra = "Prisma17"
-pass <- data.frame(usuario = usuario, contrasena = contra)
-write.csv(pass, paste0(dir_configuracion_otros,"pass.csv"), row.names = F)
 
 pass <- read.csv(paste0(dir_configuracion_otros,"pass.csv"))
-
-usuarioTeradata <- as.character(pass[1,"valor"])
-contrasenaTeradata <- as.character(pass[2,"valor"])
+usuarioTeradata <- as.character(pass$usuario)
+contrasenaTeradata <- as.character(pass$contrasena)
 
 ## Fecha
 year <- as.numeric(format(Sys.Date(), "%Y"))

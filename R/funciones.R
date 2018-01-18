@@ -1,0 +1,112 @@
+## En este script se encuentran distintas funciones de uso general
+
+# Funcion para ejecutar queries -------------------------------------------
+
+get_query <- function(query, db){
+  if (tolower(db) == "teradata" | tolower(db) == "td"){
+    
+    # ejecuto query
+    options( java.parameters = "-Xmx8g" )
+    library(RJDBC)
+    library(teradataR)
+    
+    # Basicos
+    source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
+    
+    #Definimos la conexion
+    drv <- JDBC("com.teradata.jdbc.TeraDriver",paste0(dir_compartida,"terajdbc4.jar:",dir_compartida,"tdgssconfig.jar"))
+    con <- tdConnect("192.168.51.2/CHARSET=UTF8,TMODE=TERA,SESSIONS= 1 ", uid = usuarioTeradata, pwd = contrasenaTeradata, dType ="jdbc")
+    
+    ## Importamos archivo
+    result <- dbGetQuery(con, query)
+    
+  } else{
+    
+    if (tolower(db) == "hadoop" | tolower(db) == "hive" | tolower(db) == "hdp"){
+      # ejecuto query
+    }
+    
+    else{
+      print("db no reconocida")
+    } 
+  }
+  
+  return(result)
+  
+}
+
+
+# Funciones para guardar mapeo y luego mapear factores ----------------------------------------------
+save_mapping <- function(df){
+  col_idx <- c()
+  
+  for (i in 1:ncol(df)){
+    
+    if (typeof(input_modelo[,i])=="character"){
+      col_idx <- c(col_idx,i)
+    }
+  }
+  
+  for (i in col_idx){
+    assign(paste0("col_key_",i),sort(unique(input_modelo[,i])))
+    len <- length(get(paste0("col_key_",i)))
+    vector <- 1:len
+    key_value <- data.frame(key = get(paste0("col_key_",i)), value = vector)
+    col_name <- colnames(df)[i]
+    colnames(key_value)[1] <- col_name
+    saveRDS(key_value, paste0(dir_configuracion_columnas, col_name,".RDS"))
+    }
+}
+
+map_factors <- function(df){
+  library(dplyr)
+  col_idx <- c()
+  
+  for (i in 1:ncol(df)){
+    
+    if (typeof(input_modelo[,i])=="character"){
+      col_idx <- c(col_idx,i)
+    }
+  }
+  
+  for (i in col_idx){
+    col_name <- colnames(df)[i]
+    if(file.exists(paste0(dir_configuracion_columnas, col_name,".RDS"))){
+      assign(paste0(col_name,"_value"), readRDS(paste0(dir_configuracion_columnas, col_name,".RDS")))
+      suppressMessages(df <- df %>% left_join(y = get(paste0(col_name,"_value"))))
+      df[,col_name] <- df[,"value"]
+      df$value <- NULL
+} else{
+      df[,i] <- 9999
+    }
+  }
+  return(df)
+}
+
+# Funcion que genera la matriz para xgboost -------------------------------
+
+## Importa mp_entrenar y devuelve un df preparado para xgboost, para pasarselo al task de MLR
+
+get_xgboost_matrix <- function(df, clase){
+
+  # partition es == 1 si se splitea en train y test y partition == 2 si se splitea en train, test y calibration
+    
+    library(data.table)
+    library(stringr)
+    dt <- as.data.table(df)
+    
+    ## Me quedo con los is.na(clase) == FALSE
+    
+    dt <- dt[is.na(get(clase)) == FALSE]
+    
+    colnames(dt) <- str_replace(colnames(df),"\\$","__")
+    
+    #Hay dos columnas que falta acomodar
+    
+    dtMatrix <- dt[,lapply(.SD,as.numeric)] %>% as.matrix
+    
+    dt <- dt %>% mutate(clase = as.factor(get(clase)))
+    
+    return(dt)
+
+}
