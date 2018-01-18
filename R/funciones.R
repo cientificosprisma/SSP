@@ -158,3 +158,29 @@ read_info <- function(filename, type, n_rows = -1L){
   }
   return(df)
 }
+
+ks <- function(tpr, fpr){
+  # se podria agregar el plot
+  
+  #this code builds on ROCR library by taking the max delt
+  #between cumulative bad and good rates being plotted by
+  #ROCR see https://cran.r-project.org/doc/contrib/Sharma-CreditScoring.pdf
+  ks = max(tpr-fpr)
+  return(ks)
+  
+}
+
+
+ks2 <- function(prd,act){
+  library(ROCR)
+  pred<-prediction(prd,act)
+  perf <- performance(pred,"tpr","fpr")
+  
+  #this code builds on ROCR library by taking the max delt
+  #between cumulative bad and good rates being plotted by
+  #ROCR see https://cran.r-project.org/doc/contrib/Sharma-CreditScoring.pdf
+  ks=max(attr(perf,'y.values')[[1]]-attr(perf,'x.values')[[1]])
+  plot(perf,main=paste0(' KS=',round(ks*100,1),'%'))
+  lines(x = c(0,1),y=c(0,1))
+  ks
+}
