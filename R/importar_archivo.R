@@ -1,8 +1,10 @@
+# Este script importa el archivo para predecir el mes corriente y lo escribe
+
+# Importar archivo --------------------------------------------------------
 rm(list = ls())
 gc()
 
 # Importar el archivo
-
 library(dplyr)
 library(data.table)
 
@@ -17,4 +19,6 @@ query<- paste0("select * from d_cientificos_datos.vs_input_modelo_v where cod_ba
 
 input_modelo <- get_query(query = query , "TD")
 
-fwrite(input_modelo, paste0(dir_modelos_actual,"input_modelo_",cod_banco,"_",cod_mes,".csv"))
+# Escribir archivo --------------------------------------------------------
+
+fwrite(input_modelo, paste0(dir_info_actual,"input_modelo_",cod_banco,"_",cod_mes,".csv"))
