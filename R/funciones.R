@@ -199,3 +199,93 @@ ks2 <- function(prd,act){
   lines(x = c(0,1),y=c(0,1))
   ks
 }
+
+actualiza_lks<-function(df){
+  
+  #actualiza lookups
+  
+  for(i in 1:ncol(df)){
+    if(class(df[,i])=="factor"& colnames(df)[i]!="clase"){
+      vec_factores<-levels(df[,i])
+      
+      vec_factores<-c(vec_factores,"__NAs__")
+      lk_act<-data.frame(id_factores=vec_factores,stringsAsFactors = FALSE)
+      lk_act<-lk_act %>% filter(id_factores!="")
+      col_nom<-colnames(df)[i]
+      colnames(lk_act)<-col_nom
+      # fwrite(lk_act,file = paste0(dir_configuracion_columnas,"lookup_",colnames(df)[i],".csv"), row.names = FALSE)
+      lk<-fread(paste0(dir_configuracion_columnas,"lookup_",col_nom,".csv"))
+      lk_merge<-unique(rbind(lk_act,lk))
+      fwrite(lk_merge,file = paste0(dir_configuracion_columnas,"lookup_",col_nom,".csv"), row.names = FALSE)
+      assign(paste0("lk_",col_nom)  ,lk_merge)
+      
+    }
+  }
+  
+}
+
+
+lookupea_factores<- function(X){
+  
+  for(i in 1:ncol(X)){
+    if(class(X[,i])=="character"& colnames(X)[i]!="clase"){
+      col_nom<-colnames(X)[i]
+      lk<-fread(paste0(dir_configuracion_columnas,"lookup_",col_nom,".csv"))
+      assign(paste0("lk_",col_nom)  ,lk)
+    }
+    }
+  #LEFT JOIN lk_Cod_Tipo_Cuenta
+  col_name<-colnames(lk_Cod_Tipo_Cuenta)
+  lk_Cod_Tipo_Cuenta<-cbind(lk_Cod_Tipo_Cuenta,lk_Cod_Tipo_Cuenta)
+  colnames(lk_Cod_Tipo_Cuenta)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Tipo_Cuenta)
+  X<-X %>% mutate(Cod_Tipo_Cuenta=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Cod_Tipo_Identificacion_Host
+  col_name<-colnames(lk_Cod_Tipo_Identificacion_Host)
+  lk_Cod_Tipo_Identificacion_Host<-cbind(lk_Cod_Tipo_Identificacion_Host,lk_Cod_Tipo_Identificacion_Host)
+  colnames(lk_Cod_Tipo_Identificacion_Host)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Tipo_Identificacion_Host)
+  X<-X %>% mutate(Cod_Tipo_Identificacion_Host=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Cod_Limite_Compra
+  col_name<-colnames(lk_Cod_Limite_Compra)
+  lk_Cod_Limite_Compra<-cbind(lk_Cod_Limite_Compra,lk_Cod_Limite_Compra)
+  colnames(lk_Cod_Limite_Compra)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Limite_Compra)
+  X<-X %>% mutate(Cod_Limite_Compra=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Cod_Region_Geografica_Host
+  col_name<-colnames(lk_Cod_Region_Geografica_Host)
+  lk_Cod_Region_Geografica_Host<-cbind(lk_Cod_Region_Geografica_Host,lk_Cod_Region_Geografica_Host)
+  colnames(lk_Cod_Region_Geografica_Host)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Region_Geografica_Host)
+  X<-X %>% mutate(Cod_Region_Geografica_Host=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Cod_Tipo_Tarjeta
+  col_name<-colnames(lk_Cod_Tipo_Tarjeta)
+  lk_Cod_Tipo_Tarjeta<-cbind(lk_Cod_Tipo_Tarjeta,lk_Cod_Tipo_Tarjeta)
+  colnames(lk_Cod_Tipo_Tarjeta)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Tipo_Tarjeta)
+  X<-X %>% mutate(Cod_Tipo_Tarjeta=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Segmento_Credito
+  col_name<-colnames(lk_Segmento_Credito)
+  lk_Segmento_Credito<-cbind(lk_Segmento_Credito,lk_Segmento_Credito)
+  colnames(lk_Segmento_Credito)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Segmento_Credito)
+  X<-X %>% mutate(Segmento_Credito=desc) %>% select(-desc)
+  
+  #LEFT JOIN lk_Cod_Sexo_Host
+  col_name<-colnames(lk_Cod_Sexo_Host)
+  lk_Cod_Sexo_Host<-cbind(lk_Cod_Sexo_Host,lk_Cod_Sexo_Host)
+  colnames(lk_Cod_Sexo_Host)<-c(col_name,"desc")
+  X<- X %>% left_join(lk_Cod_Sexo_Host)
+  X<-X %>% mutate(Cod_Sexo_Host=desc) %>% select(-desc)
+  X[is.na(X)]<-"__NAs__"
+  return(X)
+}
+add_na_elem<-function(a){
+ return( c(a,"__NAs__"))
+  
+}
