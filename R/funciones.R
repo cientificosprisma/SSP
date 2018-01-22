@@ -289,3 +289,12 @@ add_na_elem<-function(a){
  return( c(a,"__NAs__"))
   
 }
+
+a_factor<-function(df,lista_col,orden=FALSE){
+  for(i in 1:length(lista_col)){
+    col<-lista_col[i]
+    idx_col<-grep(paste0("^",col,"$"),colnames(df))
+    df[,idx_col]<-factor(df[,idx_col],ordered = orden)
+  }
+  return(df)
+}
