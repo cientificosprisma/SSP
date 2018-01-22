@@ -298,3 +298,32 @@ a_factor<-function(df,lista_col,orden=FALSE){
   }
   return(df)
 }
+
+obtener_factores_faltantes<-function(train,df_completo,factor_list){
+  library(data.table)
+  list_dfs<-c()
+  max<-0
+  longitud  <- c()
+  for(i in 1:length(factor_list)){
+    col<-factor_list[i]
+    idx_col<-grep(paste0("^",col,"$"),colnames(df))
+    factor_dif<-c(levels(df[,idx_col])[!( levels(df[,idx_col])%in% unique(train[,idx_col])  )])
+    factor_dif<-add_na_elem(factor_dif)
+    assign(paste0("factor_dif_",col),factor_dif)
+    list_dfs<-c(list_dfs,paste0("factor_dif_",col))
+    # longitud <- c(longitud, length(factor_dif))
+    max<-ifelse(max<length(factor_dif),length(factor_dif),max)
+  }
+  
+  # which(longitud == max(longitud))
+  df_aux <- as.data.table(df[1:max,])
+  
+  for (c in 1:length(factor_list) ){
+    col<-factor_list[c]
+    idx_col<-grep(paste0("^",col,"$"),colnames(df))
+    df_aux[,idx_col] <- get(paste0("factor_dif_",col))
+    
+  }
+  df_aux$clase<-'0'
+  return(as.data.frame(df_aux))
+}
