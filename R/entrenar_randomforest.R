@@ -46,7 +46,11 @@ for(i in 1:ncol(na_row)){if(typeof(na_row[,i])!="character"){na_row[,i]<-(-99999
 for(i in 1:ncol(na_row)){if(typeof(na_row[,i])=="character"){na_row[,i]<-("__NAs__")}}
 df<-rbind(df,na_row)
 
-actualiza_lks(df)
+factores_nominales<-as.list(fread(paste0(dir_configuracion_columnas,"factores_nominales.csv"),header = FALSE))
+factores_ordinales<-as.list(fread(paste0(dir_configuracion_columnas,"factores_ordinales.csv"),header = FALSE))
+factores<-as.list(c(factores_nominales,factores_ordinales))
+
+actualiza_lks(df,factores)
 #######
 
 # Partimos en train y test ------------------------------------------------
@@ -72,8 +76,6 @@ gc()
 ############## Se cambian los tipo de datos que corresponden a factores
 
 
-factores_nominales<-as.list(fread(paste0(dir_configuracion_columnas,"factores_nominales.csv"),header = FALSE))
-factores_ordinales<-as.list(fread(paste0(dir_configuracion_columnas,"factores_ordinales.csv"),header = FALSE))
 
 
 df<-a_factor(df,lista_col =factores_nominales ,orden = FALSE)
@@ -154,8 +156,8 @@ write.csv(opt_results, paste0(dir_performance_modelos_pruebas,"randomforest_", c
 faltantes_train<-obtener_factores_faltantes(train,df,factores_nominales)
 train<-rbind(train,faltantes_train)
 
-train<-lookupea_factores(train)
-test<-lookupea_factores(test)
+train<-lookupea_factores(train,factores)
+test<-lookupea_factores(test,factores)
 
 ####
 
