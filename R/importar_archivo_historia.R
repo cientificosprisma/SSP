@@ -17,11 +17,11 @@ cod_mes <- args[2]
 
 print(args)
 
-query<- paste0("select * from d_cientificos_datos.vs_input_modelo_v where cod_banco = ", cod_banco, " and cod_mes = ", cod_mes)
+query<- paste0("select * from d_cientificos_datos.vs_input_modelo_v")
 
 input_modelo <- get_query(query = query , "TD")
 
 # Escribo el archivo ------------------------------------------------------
 
-fwrite(input_modelo, paste0(dir_modelos_actual,"input_modelo_",cod_banco,"_",cod_mes))
+fwrite(input_modelo, paste0(dir_modelos_historia,"input_modelo_historia.csv"))
 
