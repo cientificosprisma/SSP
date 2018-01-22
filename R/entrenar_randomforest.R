@@ -22,7 +22,7 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
 
-df <- read_info("input_modelo_2018_1.csv","historia", 1000,strings_as_factors=FALSE)
+df <- read_info("input_modelo_2018_1.csv","historia", 10000,strings_as_factors=FALSE)
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
 df[is.na(df)]<-(-99999)
@@ -228,10 +228,10 @@ names(measures)[3] <- "ks"
 write.csv(measures, paste0(dir_performance_modelos_pruebas,"ranger_measures_", cod_mes,".csv"), row.names = FALSE)
 
 # obtengo variable importance
-var_importance <- getFeatureImportance(rf_model)
-var_importance <- as.data.frame(t(var_importance$res))
+#var_importance <- getFeatureImportance(rf_model)
+#var_importance <- as.data.frame(t(var_importance$res))
 
-write.csv(var_importance, paste0(dir_performance_modelos_pruebas,"xgboost_var_importance_", cod_mes,".csv"), row.names = FALSE)
+#write.csv(var_importance, paste0(dir_performance_modelos_pruebas,"xgboost_var_importance_", cod_mes,".csv"), row.names = FALSE)
 
 
 
