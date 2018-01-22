@@ -23,5 +23,5 @@ input_modelo <- get_query(query = query , "TD")
 
 # Escribo el archivo ------------------------------------------------------
 
-fwrite(input_modelo, paste0(dir_modelos_historia,"input_modelo_historia.csv"))
+fwrite(input_modelo, paste0(dir_info_historia,"input_modelo_historia.csv"))
 
