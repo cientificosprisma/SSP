@@ -1,14 +1,14 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_lc(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_lc_hist(cod_mes SMALLINT, cod_banco SMALLINT)
 BEGIN
 --------------------------------------------------------------------------------------------------------------------------------
 -----------Creacion de tablas con Variables de Tendencias (Liquidacion_cuenta)----------------------
 --------------------------------------------------------------------------------------------------------------------------------
-DELETE FROM d_cientificos_datos.VS_tend_lc WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
+DELETE FROM d_cientificos_datos.VS_tend_lc_hist WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
 
 --------------------------------------------------------------------------------------------------------------------------------
 -----------Creacion de tablas con Variables de Tendencias (Liquidacion_cuenta)----------------------
 --------------------------------------------------------------------------------------------------------------------------------
-INSERT INTO d_cientificos_datos.VS_tend_lc
+INSERT INTO d_cientificos_datos.VS_tend_lc_hist
 SELECT 
 A.nro_cuenta,
 A.cod_mes,
@@ -54,11 +54,11 @@ CASE WHEN (CASE WHEN A.Intereses_Financiacion_Pesos-SCH1.Intereses_Financiacion_
 					CASE WHEN SCH2.Intereses_Financiacion_Pesos-SCH3.Intereses_Financiacion_Pesos IS NOT NULL THEN 1 ELSE 0 END +
 						CASE WHEN SCH3.Intereses_Financiacion_Pesos-SCH4.Intereses_Financiacion_Pesos IS NOT NULL THEN 1 ELSE 0 END) END  AS Prom_Dif_IntFin
 											
-FROM d_cientificos_datos.VS_aux_cta AS A
+FROM d_cientificos_datos.VS_aux_cta_hist AS A
 
 LEFT JOIN p_views.liquidacion_cuenta AS SCH1
 	ON A.nro_cuenta=SCH1.nro_cuenta
-	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1END
+	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1 END
 	
 LEFT JOIN p_views.liquidacion_cuenta AS SCH2
 	ON SCH1.nro_cuenta=SCH2.nro_cuenta
@@ -76,12 +76,13 @@ LEFT JOIN p_views.liquidacion_cuenta AS SCH4
 
 
 
---EXEC d_sistemas.genera_estadisticas ('d_cientificos_datos','VS_tend_lc');
-COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Nro_Cuenta;
-COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IntFin;
-COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IntPun;
-COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IVA;
-COLLECT STAT ON d_cientificos_datos.VS_tend_lc INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist COLUMN Nro_Cuenta;
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist COLUMN Prom_Dif_IntFin;
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist COLUMN Prom_Dif_IntPun;
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist COLUMN Prom_Dif_IVA;
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc_hist INDEX idx_cuenta_mes;
 
 
 END;
+
