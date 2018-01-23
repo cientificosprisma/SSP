@@ -79,5 +79,7 @@ COLLECT STAT ON d_cientificos_datos.VS_var_bancos COLUMN Nro_Cuenta;
 COLLECT STAT ON d_cientificos_datos.VS_var_bancos COLUMN prom_dif_morosos_30;
 COLLECT STAT ON d_cientificos_datos.VS_var_bancos COLUMN Prom_morosos_30_AA;
 COLLECT STAT ON d_cientificos_datos.VS_var_bancos INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_var_bancos INDEX idx_cuenta_mes;
 
 END;
+

@@ -1,4 +1,4 @@
-CREATE PROCEDURE d_cientificos_datos.sp_VS_tend_sc(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_sc(cod_mes SMALLINT, cod_banco SMALLINT)
 
 BEGIN
 --------------------------------------------------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ FROM d_cientificos_datos.VS_aux_cta AS A
 
 LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH1
 	ON A.nro_cuenta=SCH1.nro_cuenta
-	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1END
+	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1 END
 	
 LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH2
 	ON SCH1.nro_cuenta=SCH2.nro_cuenta
@@ -62,5 +62,8 @@ COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Nro_Cuenta;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_PMI_30;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_ScoFinan;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX idx_cuenta_mes;
 
 END;
+
+

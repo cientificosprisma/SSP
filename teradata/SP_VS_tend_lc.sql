@@ -58,7 +58,7 @@ FROM d_cientificos_datos.VS_aux_cta AS A
 
 LEFT JOIN p_views.liquidacion_cuenta AS SCH1
 	ON A.nro_cuenta=SCH1.nro_cuenta
-	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1END
+	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1 END
 	
 LEFT JOIN p_views.liquidacion_cuenta AS SCH2
 	ON SCH1.nro_cuenta=SCH2.nro_cuenta
@@ -76,12 +76,13 @@ LEFT JOIN p_views.liquidacion_cuenta AS SCH4
 
 
 
---EXEC d_sistemas.genera_estadisticas ('d_cientificos_datos','VS_tend_lc');
 COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Nro_Cuenta;
 COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IntFin;
 COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IntPun;
 COLLECT STAT ON d_cientificos_datos.VS_tend_lc COLUMN Prom_Dif_IVA;
 COLLECT STAT ON d_cientificos_datos.VS_tend_lc INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_lc INDEX idx_cuenta_mes;
 
 
 END;
+

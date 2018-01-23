@@ -1,4 +1,4 @@
-CREATE PROCEDURE d_cientificos_datos.sp_VS_aux_cta(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_aux_cta(cod_mes SMALLINT, cod_banco SMALLINT)
 BEGIN
 
 
@@ -597,5 +597,8 @@ LEFT JOIN d_cientificos_datos.indice_inflacion AS INFL
 	ON A.cod_mes=INFL.anio*100+INFL.mes;
 	
 COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_cuenta_mes;
+COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_mes;
 
 END;
+
