@@ -22,8 +22,7 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
-
-df <- read_info("input_modelo_2018_1.csv","historia", 10000,strings_as_factors=FALSE)
+df <- read_info("input_modelo_historia.csv","historia", 2000000,strings_as_factors=FALSE)
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
 df[is.na(df)]<-(-99999)
@@ -104,7 +103,7 @@ sampling_method = makeFixedHoldoutInstance(train_inds, test_inds, nrow(df))
 
 randomforest_learner <- makeLearner("classif.ranger", predict.type = "prob",fix.factors.prediction = TRUE)
 
-randomforest_learner$par.vals<- list(num.threads =12 )
+randomforest_learner$par.vals<- list(num.threads =6 )
 
 
 
@@ -114,18 +113,23 @@ randomforest_params <- makeParamSet(
   makeIntegerParam("mtry", lower = 10, upper = 30, default = 15)
   )
 
+des = generateDesign(n = 20, par.set = randomforest_params)
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
 # mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,50,75,99),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_",cod_mes,".RData"))
 mbo_control <- makeMBOControl()
 # Extends an MBO control object with infill criteria and infill optimizer options
-mbo_control <- setMBOControlTermination(mbo_control, iters = 5)
+mbo_control <- setMBOControlTermination(mbo_control, iters = 40)
 
 # Defining surrogate learner
 surrogate_lrn <- makeLearner("regr.km", predict.type = "se")
+clase = df[train_inds,"clase"]
+nuggets = 1e-8*var(clase)
+
+surrogate_lrn <- setHyperPars(learner = surrogate_lrn, par.vals = list(nugget=nuggets))
 
 # Create control object for hyperparameter tuning with MBO
-tune_control = mlr:::makeTuneControlMBO(learner = surrogate_lrn, mbo.control = mbo_control)
+tune_control = mlr:::makeTuneControlMBO(learner = surrogate_lrn, mbo.control = mbo_control, mbo.design = des)
 
 # Tuneo parametros --------------------------------------------------------
 rf_tune <-
