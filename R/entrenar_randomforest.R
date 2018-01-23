@@ -116,8 +116,8 @@ randomforest_params <- makeParamSet(
 des = generateDesign(n = 20, par.set = randomforest_params)
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
-# mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,50,75,99),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_",cod_mes,".RData"))
-mbo_control <- makeMBOControl()
+ mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,30,40),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_",cod_mes,".RData"))
+#mbo_control <- makeMBOControl()
 # Extends an MBO control object with infill criteria and infill optimizer options
 mbo_control <- setMBOControlTermination(mbo_control, iters = 40)
 
