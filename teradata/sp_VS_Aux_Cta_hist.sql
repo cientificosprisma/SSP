@@ -1,10 +1,10 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_aux_cta(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_aux_cta_hist(cod_mes SMALLINT, cod_banco SMALLINT)
 BEGIN
 
 
-	DELETE FROM d_cientificos_datos.VS_aux_cta WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
+	DELETE FROM d_cientificos_datos.VS_aux_cta_hist WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
 
-INSERT INTO d_cientificos_datos.VS_aux_cta 
+INSERT INTO d_cientificos_datos.VS_aux_cta_hist 
 SELECT
 --bt_segmento_cuentas
 a.Ano,
@@ -596,9 +596,9 @@ a.ano *100 + a.mes = (s.ano - 1) *100 + s.mes
 LEFT JOIN d_cientificos_datos.indice_inflacion AS INFL
 	ON A.cod_mes=INFL.anio*100+INFL.mes;
 	
-COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX (Nro_Cuenta);
-COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_cuenta_mes;
-COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_mes;
+COLLECT STAT ON d_cientificos_datos.VS_aux_cta_hist INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_aux_cta_hist INDEX idx_cuenta_mes;
+COLLECT STAT ON d_cientificos_datos.VS_aux_cta_hist INDEX idx_mes;
 
 END;
 

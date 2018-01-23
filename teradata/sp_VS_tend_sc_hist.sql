@@ -1,13 +1,13 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_sc(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_sc_hist(cod_mes SMALLINT, cod_banco SMALLINT)
 
 BEGIN
 --------------------------------------------------------------------------------------------------------------------------------
 -----------Creacion de tablas con Variables de Tendencias (segmento_cuenta------)----------------------
 --------------------------------------------------------------------------------------------------------------------------------
 
-DELETE FROM d_cientificos_datos.VS_tend_sc WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
+DELETE FROM d_cientificos_datos.VS_tend_sc_hist WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco;
 
-INSERT INTO d_cientificos_datos.VS_tend_sc
+INSERT INTO d_cientificos_datos.VS_tend_sc_hist
 SELECT 
 A.nro_cuenta,
 A.cod_mes,
@@ -38,7 +38,7 @@ CASE WHEN (CASE WHEN A.Score_Financiacion-SCH1.Score_Financiacion IS NOT NULL TH
 					CASE WHEN SCH2.Score_Financiacion-SCH3.Score_Financiacion IS NOT NULL THEN 1 ELSE 0 END +
 						CASE WHEN SCH3.Score_Financiacion-SCH4.Score_Financiacion IS NOT NULL THEN 1 ELSE 0 END) END  AS Prom_Dif_ScoFinan
        											
-FROM d_cientificos_datos.VS_aux_cta AS A
+FROM d_cientificos_datos.VS_aux_cta_hist AS A
 
 LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH1
 	ON A.nro_cuenta=SCH1.nro_cuenta
@@ -58,11 +58,11 @@ LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH4
 
 	WHERE SCH1.cod_mes = :cod_mes AND SCH1.cod_banco = :cod_banco;
 
-COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Nro_Cuenta;
-COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_PMI_30;
-COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_ScoFinan;
-COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX (Nro_Cuenta);
-COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX idx_cuenta_mes;
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc_hist COLUMN Nro_Cuenta;
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc_hist COLUMN Prom_Dif_PMI_30;
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc_hist COLUMN Prom_Dif_ScoFinan;
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc_hist INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc_hist INDEX idx_cuenta_mes;
 
 END;
 
