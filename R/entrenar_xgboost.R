@@ -17,9 +17,19 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 cod_mes = 201801
+tipo_clase = 2
+
+if (tipo_clase == 1){
+  path <- dir_performance_modelos_pruebas_tipo_clase_1
+} else{
+  path <- dir_performance_modelos_pruebas_tipo_clase_2
+}
+
 # Importamos archivo ------------------------------------------------------
 
-df <- read_info("input_modelo_2018_1.csv","historia")
+tbl = paste0("input_modelo_historia_g",tipo_clase,".csv")
+
+df <- read_info(tbl,"historia")
 
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
@@ -60,7 +70,7 @@ xgboost_learner <- makeLearner("classif.xgboost", predict.type = "prob")
 
 xgboost_learner$par.vals <- list(
   booster = "gbtree",
-  nthread = 12)
+  nthread = 6)
 
 xgboost_params <- makeParamSet(
   makeIntegerParam("nrounds",lower=200,upper=750, default = 350),
@@ -71,7 +81,7 @@ xgboost_params <- makeParamSet(
 
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
-mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,45),save.file.path = paste0(dir_performance_modelos_pruebas,"xgboost_parametros_1.RData"))
+mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,45),save.file.path = paste0(path,"xgboost_parametros_", cod_mes, ".RData"))
 
 # Extends an MBO control object with infill criteria and infill optimizer options
 mbo_control <- setMBOControlTermination(mbo_control, iters = 50)
@@ -94,8 +104,8 @@ xg_tune <-
     show.info = TRUE
   )
 
-opt_results <- as.data.frame(xgTune$opt.path)
-write.csv(opt_results, paste0(dir_performance_modelos_pruebas,"xgboost_", cod_mes,".csv"), row.names = FALSE)
+opt_results <- as.data.frame(xg_tune$opt.path)
+write.csv(opt_results, paste0(path,"xgboost_pruebas_completas_", cod_mes,".csv"), row.names = FALSE)
 
 # Elijo los mejores parametros y entreno--------------------------------------------
 
@@ -126,14 +136,13 @@ names(measures)[3] <- "ks"
 
 # guardo resultados
 
-write.csv(measures, paste0(dir_performance_modelos_pruebas,"xgboost_measures_", cod_mes,".csv"), row.names = FALSE)
+write.csv(measures, paste0(path,"xgboost_best_measures_", cod_mes,".csv"), row.names = FALSE)
 
 # obtengo variable importance
 var_importance <- getFeatureImportance(xg_model)
 var_importance <- as.data.frame(t(var_importance$res))
 
 write.csv(var_importance, paste0(dir_performance_modelos_pruebas,"xgboost_var_importance_", cod_mes,".csv"), row.names = FALSE)
-
 
 
 
