@@ -31,6 +31,9 @@ dir_performance <- paste0(dir_resultados,"performance/")
 dir_performance_graficos <- paste0(dir_performance,"graficos/")
 dir_performance_modelos_finales <- paste0(dir_performance,"modelos/finales/")
 dir_performance_modelos_pruebas <- paste0(dir_performance,"modelos/pruebas/")
+dir_performance_modelos_pruebas_tipo_clase_1 <- paste0(dir_performance,"modelos/pruebas/tipo_clase_1/")
+dir_performance_modelos_pruebas_tipo_clase_2 <- paste0(dir_performance,"modelos/pruebas/tipo_clase_2/")
+
 dir_predicciones <- paste0(dir_resultados,"predicciones/")
 
 
