@@ -1,4 +1,4 @@
-CREATE PROCEDURE d_cientificos_datos.sp_VS_tend_sc(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_sc(cod_mes SMALLINT, cod_banco SMALLINT)
 
 BEGIN
 --------------------------------------------------------------------------------------------------------------------------------
@@ -40,19 +40,19 @@ CASE WHEN (CASE WHEN A.Score_Financiacion-SCH1.Score_Financiacion IS NOT NULL TH
        											
 FROM d_cientificos_datos.VS_aux_cta AS A
 
-LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH1
+LEFT JOIN p_access_tool.bt_segmento_cuentas AS SCH1
 	ON A.nro_cuenta=SCH1.nro_cuenta
-	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1END
+	AND (SCH1.ano*100+SCH1.mes)=CASE WHEN A.mes=1 THEN A.cod_mes-89 ELSE A.cod_mes-1 END
 	
-LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH2
+LEFT JOIN p_access_tool.bt_segmento_cuentas AS SCH2
 	ON SCH1.nro_cuenta=SCH2.nro_cuenta
 	AND (SCH2.ano*100+SCH2.mes)= CASE WHEN SCH1.mes=1 THEN (SCH1.ano*100+SCH1.mes)-89 ELSE (SCH1.ano*100+SCH1.mes)-1 END
 	
-LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH3
+LEFT JOIN p_access_tool.bt_segmento_cuentas AS SCH3
 	ON SCH2.nro_cuenta=SCH3.nro_cuenta
 	AND (SCH3.ano*100+SCH3.mes) =CASE WHEN SCH2.mes=1 THEN (SCH2.ano*100+SCH2.mes)-89 ELSE (SCH2.ano*100+SCH2.mes)-1 END
 	
-LEFT JOIN p_access_tool.bt_segmento_cuentas_hist AS SCH4
+LEFT JOIN p_access_tool.bt_segmento_cuentas AS SCH4
 	ON SCH3.nro_cuenta=SCH4.nro_cuenta
 	AND (SCH4.ano*100+SCH4.mes)= CASE WHEN SCH3.mes=1 THEN (SCH3.ano*100+SCH3.mes)-89 ELSE (SCH3.ano*100+SCH3.mes)-1 END
 
@@ -62,5 +62,8 @@ COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Nro_Cuenta;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_PMI_30;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc COLUMN Prom_Dif_ScoFinan;
 COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.VS_tend_sc INDEX idx_cuenta_mes;
 
 END;
+
+
