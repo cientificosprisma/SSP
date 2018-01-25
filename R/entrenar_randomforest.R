@@ -22,7 +22,7 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
-df <- read_info("input_modelo_historia.csv","historia", 2000000,strings_as_factors=FALSE)
+df <- read_info("input_modelo_historia_g2.csv","historia", 2000000,strings_as_factors=FALSE)
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
 df[is.na(df)]<-(-99999)
@@ -109,14 +109,14 @@ randomforest_learner$par.vals<- list(num.threads =6 )
 
 #randomforest_learner$par.set
 randomforest_params <- makeParamSet(
-  makeIntegerParam("num.trees",lower=400,upper=600),
-  makeIntegerParam("mtry", lower = 10, upper = 30, default = 15)
+  makeIntegerParam("num.trees",lower=400,upper=650),
+  makeIntegerParam("mtry", lower = 6, upper = 26, default = 15)
   )
 
 des = generateDesign(n = 20, par.set = randomforest_params)
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
- mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,30,40),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_",cod_mes,".RData"))
+ mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,30,40),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_.RData"))
 #mbo_control <- makeMBOControl()
 # Extends an MBO control object with infill criteria and infill optimizer options
 mbo_control <- setMBOControlTermination(mbo_control, iters = 40)
