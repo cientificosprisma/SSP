@@ -1,4 +1,4 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_var_bancos(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_var_bancos(cod_mes INTEGER, cod_banco SMALLINT)
 
 BEGIN
 -- Inserto en tabla intermedia
@@ -82,4 +82,3 @@ COLLECT STAT ON d_cientificos_datos.VS_var_bancos INDEX (Nro_Cuenta);
 COLLECT STAT ON d_cientificos_datos.VS_var_bancos INDEX idx_cuenta_mes;
 
 END;
-

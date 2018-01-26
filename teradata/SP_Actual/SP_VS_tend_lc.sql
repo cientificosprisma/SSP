@@ -1,4 +1,4 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_lc(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_tend_lc(cod_mes INTEGER, cod_banco SMALLINT)
 BEGIN
 --------------------------------------------------------------------------------------------------------------------------------
 -----------Creacion de tablas con Variables de Tendencias (Liquidacion_cuenta)----------------------
@@ -85,4 +85,3 @@ COLLECT STAT ON d_cientificos_datos.VS_tend_lc INDEX idx_cuenta_mes;
 
 
 END;
-
