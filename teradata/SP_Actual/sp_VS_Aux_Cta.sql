@@ -1,4 +1,5 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_aux_cta(cod_mes SMALLINT, cod_banco SMALLINT)
+
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_aux_cta(cod_mes INTEGER, cod_banco SMALLINT)
 BEGIN
 
 
@@ -7,10 +8,10 @@ DELETE FROM d_cientificos_datos.VS_aux_cta WHERE cod_mes = :cod_mes AND cod_banc
 INSERT INTO d_cientificos_datos.VS_aux_cta 
 SELECT
 --bt_segmento_cuentas
-a.Ano,
-a.Mes,
-a.Cod_Mes,
-a.Nro_Cuenta,
+ui.Anio as ano,
+ui.Mes,
+ui.periodo as Cod_Mes,
+ui.Nro_Cuenta,
 Denominacion_Cuenta_Host,
 Nro_Identificacion_Titular,
 Cod_Tipo_Identificacion_Host,
@@ -217,63 +218,6 @@ CASE WHEN g.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_i
 
 --Pagos minimos impagos posteriores: 30 y 60 
 
--- 30
-h.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_1,
-i.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_2,
-j.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_3,
-k.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_4,
-l.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_5,
-m.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_6,
-n.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_7,
-o.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_8,
-p.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_9,
-q.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_10,
-r.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_11,
-s.pago_minimo_impago_30 AS pago_minimo_impago_30_mas_12,
-
--- 60
-h.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_1,
-i.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_2,
-j.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_3,
-k.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_4,
-l.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_5,
-m.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_6,
-n.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_7,
-o.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_8,
-p.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_9,
-q.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_10,
-r.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_11,
-s.pago_minimo_impago_60 AS pago_minimo_impago_60_mas_12,
-
---Marca de pagos minimos impagos posteriores: 30 y 60
-
--- 30
-CASE WHEN h.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_1,
-CASE WHEN i.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_2,
-CASE WHEN j.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_3,
-CASE WHEN k.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_4,
-CASE WHEN l.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_5,
-CASE WHEN m.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_6,
-CASE WHEN n.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_7,
-CASE WHEN o.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_8,
-CASE WHEN p.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_9,
-CASE WHEN q.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_10,
-CASE WHEN r.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_11,
-CASE WHEN s.pago_minimo_impago_30 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_30_mas_12,
-
--- 60
-CASE WHEN h.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_1,
-CASE WHEN i.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_2,
-CASE WHEN j.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_3,
-CASE WHEN k.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_4,
-CASE WHEN l.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_5,
-CASE WHEN m.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_6,
-CASE WHEN n.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_7,
-CASE WHEN o.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_8,
-CASE WHEN p.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_9,
-CASE WHEN q.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_10,
-CASE WHEN r.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_11,
-CASE WHEN s.pago_minimo_impago_60 > 100 THEN 1 ELSE 0 END AS marca_pago_minimo_impago_60_mas_12,
 
 --------- Gastos e intereses agregados
 -- Gastos
@@ -288,62 +232,15 @@ Importe_Compra_Total_a_$ + Importe_DA_Total_a_$ + Importe_Adelanto_Total_a_$ AS 
 
 Intereses_Financiacion_Pesos + Intereses_Punitorios_Total AS intereses_pesos,
 Intereses_Financiacion_Dolares + Intereses_Punitorios_Dolares AS intereses_dolares,
-
---------- Armado de clase
-
--- Criterio de corto plazo
-
-
-CASE WHEN (marca_pago_minimo_impago_30_mas_1 + marca_pago_minimo_impago_30_mas_2 + marca_pago_minimo_impago_30_mas_3 + marca_pago_minimo_impago_30_mas_4) >= 2 THEN 1 ELSE 0 END AS clase_cp_1,
-
-
-CASE WHEN (marca_pago_minimo_impago_30_mas_1 + marca_pago_minimo_impago_30_mas_2 + marca_pago_minimo_impago_30_mas_3 + marca_pago_minimo_impago_30_mas_4 + marca_pago_minimo_impago_30_mas_5 + marca_pago_minimo_impago_30_mas_6) >= 2
-				THEN 1 ELSE 0 END AS clase_cp_2,
-				
--- Criterio de largo plazo:
-
-
-CASE WHEN 
-(marca_pago_minimo_impago_30_mas_1 + marca_pago_minimo_impago_30_mas_2 + marca_pago_minimo_impago_30_mas_3 + marca_pago_minimo_impago_30_mas_4 + marca_pago_minimo_impago_30_mas_5 + marca_pago_minimo_impago_30_mas_6 +
-marca_pago_minimo_impago_30_mas_7 + marca_pago_minimo_impago_30_mas_8 + marca_pago_minimo_impago_30_mas_9 + marca_pago_minimo_impago_30_mas_10 ) >= 3 
-OR
-( marca_pago_minimo_impago_60_mas_2 + marca_pago_minimo_impago_60_mas_3 + marca_pago_minimo_impago_60_mas_4 + marca_pago_minimo_impago_60_mas_5 + marca_pago_minimo_impago_60_mas_6 +
-marca_pago_minimo_impago_60_mas_7 + marca_pago_minimo_impago_60_mas_8 + marca_pago_minimo_impago_60_mas_9 + marca_pago_minimo_impago_60_mas_10 /*+ marca_pago_minimo_impago_60_mas_11 + marca_pago_minimo_impago_60_mas_12*/) >= 1
-THEN 1 ELSE 0 END AS clase_lp_1,
-
-
-CASE WHEN 
-(marca_pago_minimo_impago_30_mas_1 + marca_pago_minimo_impago_30_mas_2 + marca_pago_minimo_impago_30_mas_3 + marca_pago_minimo_impago_30_mas_4 + marca_pago_minimo_impago_30_mas_5 + marca_pago_minimo_impago_30_mas_6 +
-marca_pago_minimo_impago_30_mas_7 + marca_pago_minimo_impago_30_mas_8 + marca_pago_minimo_impago_30_mas_9 + marca_pago_minimo_impago_30_mas_10 + marca_pago_minimo_impago_30_mas_11 + marca_pago_minimo_impago_30_mas_12) >= 3 
-OR
- ( marca_pago_minimo_impago_60_mas_2 + marca_pago_minimo_impago_60_mas_3 + marca_pago_minimo_impago_60_mas_4 + marca_pago_minimo_impago_60_mas_5 + marca_pago_minimo_impago_60_mas_6 +
-marca_pago_minimo_impago_60_mas_7 + marca_pago_minimo_impago_60_mas_8 + marca_pago_minimo_impago_60_mas_9 + marca_pago_minimo_impago_60_mas_10 + marca_pago_minimo_impago_60_mas_11 + marca_pago_minimo_impago_60_mas_12) >= 1
-THEN 1 ELSE 0 END AS clase_lp_2,
-
--- Criterio de Veraz: extraído de 82 - VISA Scoring Services - Actualización, pág. 4
-
-
-
-
-
--- Al momento de calcular el score no presente atraso, y en los siguientes 12 meses, en algún momento, deja de pagar dos pagos mínimos consecutivos, o;
-CASE WHEN 
-((marca_pago_minimo_impago_30 + marca_pago_minimo_impago_30_menos_1 + marca_pago_minimo_impago_30_menos_2 + marca_pago_minimo_impago_30_menos_3 + marca_pago_minimo_impago_30_menos_4 + marca_pago_minimo_impago_30_menos_5) = 0
-AND 
- ( marca_pago_minimo_impago_60_mas_2 + marca_pago_minimo_impago_60_mas_3 + marca_pago_minimo_impago_60_mas_4 + marca_pago_minimo_impago_60_mas_5 + marca_pago_minimo_impago_60_mas_6 +
-marca_pago_minimo_impago_60_mas_7 + marca_pago_minimo_impago_60_mas_8 + marca_pago_minimo_impago_60_mas_9 + marca_pago_minimo_impago_60_mas_10 + marca_pago_minimo_impago_60_mas_11 + marca_pago_minimo_impago_60_mas_12) >= 1)
-
-OR
--- Al momento de calcular el score presenta al menos un pago mínimo impago, y en los siguientes 12 meses tiene, en algún momento, tres o más pagos mínimos impagos.
-((marca_pago_minimo_impago_30 + marca_pago_minimo_impago_30_menos_1 + marca_pago_minimo_impago_30_menos_2 + marca_pago_minimo_impago_30_menos_3 + marca_pago_minimo_impago_30_menos_4 + marca_pago_minimo_impago_30_menos_5) >= 1
-AND 
-(marca_pago_minimo_impago_30_mas_1 + marca_pago_minimo_impago_30_mas_2 + marca_pago_minimo_impago_30_mas_3 + marca_pago_minimo_impago_30_mas_4 + marca_pago_minimo_impago_30_mas_5 + marca_pago_minimo_impago_30_mas_6 +
-marca_pago_minimo_impago_30_mas_7 + marca_pago_minimo_impago_30_mas_8 + marca_pago_minimo_impago_30_mas_9 + marca_pago_minimo_impago_30_mas_10 + marca_pago_minimo_impago_30_mas_11 + marca_pago_minimo_impago_30_mas_12)>= 3 ) 
-THEN 1 ELSE 0 END AS clase_veraz
+--clasificacion de cuentas en tipo de clase
+case when (marca_pago_minimo_impago_30 + marca_pago_minimo_impago_30_menos_1 + marca_pago_minimo_impago_30_menos_2 + marca_pago_minimo_impago_30_menos_3 + marca_pago_minimo_impago_30_menos_4 + marca_pago_minimo_impago_30_menos_5) = 0 then 1 else 2 end AS clase_veraz
 
 FROM
-(SELECT * FROM p_access_tool.bt_segmento_cuentas
-WHERE cod_mes = :cod_mes AND cod_banco = :cod_banco) AS A
+d_cientificos_datos.vs_universo_inicial_a_procesar_v UI
+LEFT JOIN
+p_access_tool.bt_segmento_cuentas A
+on A.cod_mes = UI.periodo AND A.cod_banco = UI.cod_banco
+and A.nro_cuenta=UI.nro_cuenta
 LEFT JOIN
 p_views.liquidacion_cuenta b
 ON 
@@ -410,199 +307,16 @@ a.ano *100 + a.mes = CASE WHEN g.mes + 5 = 13 THEN (g.ano + 1) *100 + 1
 AND
 a.ciclo_liquidacion = g.ciclo_liquidacion
 
--- Joins para ver deuda posterior
-LEFT JOIN
-p_views.deuda_cuenta h
-ON 
-a.nro_cuenta = h.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN h.mes - 1 = 0 THEN (h.ano - 1) * 100 + 12 ELSE h.ano *100 + h.mes - 1 END 
-AND
-a.ciclo_liquidacion = h.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta i
-ON 
-a.nro_cuenta = i.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN i.mes - 2 = 0 THEN (i.ano - 1) * 100 + 12 
-	 WHEN i.mes - 2 = -1 THEN (i.ano - 1) * 100 + 11
-		ELSE i.ano *100 + i.mes - 2 END 
-AND
-a.ciclo_liquidacion = i.ciclo_liquidacion
-LEFT JOIN
-p_views.deuda_cuenta j
-ON 
-a.nro_cuenta = j.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN j.mes - 3 = 0 THEN (j.ano - 1) * 100 + 12 
- WHEN j.mes - 3 = -1 THEN (j.ano - 1) * 100 + 11
- WHEN j.mes - 3 = -2 THEN (j.ano - 1) * 100 + 10
-ELSE j.ano *100 + j.mes - 3 END 
-AND
-a.ciclo_liquidacion = j.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta k
-ON 
-a.nro_cuenta = k.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN k.mes - 4 = 0 THEN (k.ano - 1) * 100 + 12 
- WHEN k.mes - 4 = -1 THEN (k.ano - 1) * 100 + 11
- WHEN k.mes - 4 = -2 THEN (k.ano - 1) * 100 + 10
- WHEN k.mes - 4 = -3 THEN (k.ano - 1) * 100 + 9
-ELSE k.ano *100 + k.mes - 4 END 
-AND
-a.ciclo_liquidacion = k.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta l
-ON 
-a.nro_cuenta = l.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN l.mes - 5 = 0 THEN (l.ano - 1) * 100 + 12 
- WHEN l.mes - 5 = -1 THEN (l.ano - 1) * 100 + 11
- WHEN l.mes - 5 = -2 THEN (l.ano - 1) * 100 + 10
- WHEN l.mes - 5 = -3 THEN (l.ano - 1) * 100 + 9
- WHEN l.mes - 5 = -4 THEN (l.ano - 1) * 100 + 8
-ELSE l.ano *100 + l.mes - 5 END 
-AND
-a.ciclo_liquidacion = l.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta m
-ON 
-a.nro_cuenta = m.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN m.mes - 6 = 0 THEN (m.ano - 1) * 100 + 12 
- WHEN m.mes - 6 = -1 THEN (m.ano - 1) * 100 + 11
- WHEN m.mes - 6 = -2 THEN (m.ano - 1) * 100 + 10
- WHEN m.mes - 6 = -3 THEN (m.ano - 1) * 100 + 9
- WHEN m.mes - 6 = -4 THEN (m.ano - 1) * 100 + 8
- WHEN m.mes - 6 = -5 THEN (m.ano - 1) * 100 + 7
-ELSE m.ano *100 + m.mes - 6 END 
-AND
-a.ciclo_liquidacion = m.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta n
-ON 
-a.nro_cuenta = n.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN n.mes - 7 = 0 THEN (n.ano - 1) * 100 + 12 
- WHEN n.mes - 7 = -1 THEN (n.ano - 1) * 100 + 11
- WHEN n.mes - 7 = -2 THEN (n.ano - 1) * 100 + 10
- WHEN n.mes - 7 = -3 THEN (n.ano - 1) * 100 + 9
- WHEN n.mes - 7 = -4 THEN (n.ano - 1) * 100 + 8
- WHEN n.mes - 7 = -5 THEN (n.ano - 1) * 100 + 7
- WHEN n.mes - 7 = -6 THEN (n.ano - 1) * 100 + 6
-ELSE n.ano *100 + n.mes - 7 END 
-AND
-a.ciclo_liquidacion = n.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta o
-ON 
-a.nro_cuenta = o.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN o.mes - 8 = 0 THEN (o.ano - 1) * 100 + 12 
- WHEN o.mes - 8 = -1 THEN (o.ano - 1) * 100 + 11
- WHEN o.mes - 8 = -2 THEN (o.ano - 1) * 100 + 10
- WHEN o.mes - 8 = -3 THEN (o.ano - 1) * 100 + 9
- WHEN o.mes - 8 = -4 THEN (o.ano - 1) * 100 + 8
- WHEN o.mes - 8 = -5 THEN (o.ano - 1) * 100 + 7
- WHEN o.mes - 8 = -6 THEN (o.ano - 1) * 100 + 6
- WHEN o.mes - 8 = -7 THEN (o.ano - 1) * 100 + 5
-ELSE o.ano *100 + o.mes - 8 END 
-AND
-a.ciclo_liquidacion = o.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta p
-ON 
-a.nro_cuenta = p.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN p.mes - 9 = 0 THEN (p.ano - 1) * 100 + 12 
- WHEN p.mes - 9 = -1 THEN (p.ano - 1) * 100 + 11
- WHEN p.mes - 9 = -2 THEN (p.ano - 1) * 100 + 10
- WHEN p.mes - 9 = -3 THEN (p.ano - 1) * 100 + 9
- WHEN p.mes - 9 = -4 THEN (p.ano - 1) * 100 + 8
- WHEN p.mes - 9 = -5 THEN (p.ano - 1) * 100 + 7
- WHEN p.mes - 9 = -6 THEN (p.ano - 1) * 100 + 6
- WHEN p.mes - 9 = -7 THEN (p.ano - 1) * 100 + 5
- WHEN p.mes - 9 = -8 THEN (p.ano - 1) * 100 + 4
-ELSE p.ano *100 + p.mes - 9 END 
-AND
-a.ciclo_liquidacion = p.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta q
-ON 
-a.nro_cuenta = q.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE WHEN q.mes - 10 = 0 THEN (q.ano - 1) * 100 + 12 
- WHEN q.mes - 10 = -1 THEN (q.ano - 1) * 100 + 11
- WHEN q.mes - 10 = -2 THEN (q.ano - 1) * 100 + 10
- WHEN q.mes - 10 = -3 THEN (q.ano - 1) * 100 + 9
- WHEN q.mes - 10 = -4 THEN (q.ano - 1) * 100 + 8
- WHEN q.mes - 10 = -5 THEN (q.ano - 1) * 100 + 7
- WHEN q.mes - 10 = -6 THEN (q.ano - 1) * 100 + 6
- WHEN q.mes - 10 = -7 THEN (q.ano - 1) * 100 + 5
- WHEN q.mes - 10 = -8 THEN (q.ano - 1) * 100 + 4
-  WHEN q.mes - 10 = -9 THEN (q.ano - 1) * 100 + 3
-ELSE q.ano *100 + q.mes - 10 END 
-AND
-a.ciclo_liquidacion = q.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta r
-ON 
-a.nro_cuenta = r.nro_cuenta
-AND
-a.ano *100 + a.mes = 
-CASE 
-WHEN r.mes - 11 = 0 THEN (r.ano - 1) * 100 + 12 
-WHEN r.mes - 11 = -1 THEN (r.ano - 1) * 100 + 11
- WHEN r.mes - 11 = -2 THEN (r.ano - 1) * 100 + 10
- WHEN r.mes - 11 = -3 THEN (r.ano - 1) * 100 + 9
- WHEN r.mes - 11 = -4 THEN (r.ano - 1) * 100 + 8
- WHEN r.mes - 11 = -5 THEN (r.ano - 1) * 100 + 7
- WHEN r.mes - 11 = -6 THEN (r.ano - 1) * 100 + 6
- WHEN r.mes - 11 = -7 THEN (r.ano - 1) * 100 + 5
- WHEN r.mes - 11 = -8 THEN (r.ano - 1) * 100 + 4
-  WHEN r.mes - 11 = -9 THEN (r.ano - 1) * 100 + 3
-  WHEN r.mes - 11 = -10 THEN (r.ano - 1) * 100 + 2
-ELSE r.ano *100 + r.mes - 11 END 
-AND
-a.ciclo_liquidacion = r.ciclo_liquidacion
-
-LEFT JOIN
-p_views.deuda_cuenta s
-ON 
-a.nro_cuenta = s.nro_cuenta
-AND
-a.ano *100 + a.mes = (s.ano - 1) *100 + s.mes
 
 LEFT JOIN d_cientificos_datos.indice_inflacion AS INFL
-	ON A.cod_mes=INFL.anio*100+INFL.mes;
+	ON A.cod_mes=INFL.anio*100+INFL.mes
+WHERE
+UI.periodo=:cod_mes
+AND UI.cod_banco=:cod_banco
+	;
 	
 COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX (Nro_Cuenta);
 COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_cuenta_mes;
 COLLECT STAT ON d_cientificos_datos.VS_aux_cta INDEX idx_mes;
 
 END;
-
-
-
-
-
