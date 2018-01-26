@@ -1,8 +1,12 @@
-
-
 replace procedure d_cientificos_datos.sp_vs_universo_inicial(anio smallint, mes smallint, banco smallint)
 begin
 
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (periodo);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (cod_banco);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 index (anio,mes);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (anio);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (mes);
 
 del from d_cientificos_datos.vs_universo_inicial_0
 where anio=:anio and mes=:mes and cod_banco=:banco ;
@@ -50,6 +54,13 @@ COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 index (anio,mes);
 COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (anio);
 COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_0 column (mes);
 
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (periodo);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (cod_banco);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar index (anio,mes);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (anio);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (mes);
+
 del from d_cientificos_datos.vs_universo_inicial_a_procesar 
 where anio=:anio and mes=:mes and cod_banco=:banco ;
 
@@ -65,6 +76,13 @@ COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (cod_b
 COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar index (anio,mes);
 COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (anio);
 COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_a_procesar column (mes);
+
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos column (Nro_Cuenta);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos column (periodo);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos column (cod_banco);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos index (anio,mes);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos column (anio);
+COLLECT STAT ON d_cientificos_datos.vs_universo_inicial_excluidos column (mes);
 
 del from d_cientificos_datos.vs_universo_inicial_excluidos
 where anio=:anio and mes=:mes and cod_banco=:banco;
