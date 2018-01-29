@@ -34,8 +34,8 @@ if (tipo_clase == 1){
 ### Importamos archivo ------------------------------------------------------
 
 if (tipo_clase == 1){
-  tbl <- paste0("input_modelo_historia_g",tipo_clase,".csv", 2000000)
-  df <- read_info(tbl,"historia")
+  tbl <- paste0("input_modelo_historia_g",tipo_clase,".csv")
+  df <- read_info(tbl,"historia",2000000)
 } else{
   tbl <- paste0("input_modelo_historia_g",tipo_clase,".csv")
   df <- read_info(tbl,"historia")
@@ -89,13 +89,13 @@ extratrees_learner <- makeLearner("classif.extraTrees", predict.type = "prob",fi
 extratrees_learner$par.vals<- list(numThreads =6 )
 
 mtry_min = round(0.2*length(colnames(df)))
-mtry_max = round(0.9*length(colnames(df)))
+mtry_max = round(0.7*length(colnames(df)))
 
 #extratrees_learner$par.set
 extratrees_params <- makeParamSet(
-  makeIntegerParam("ntree",lower=200,upper=600),
+  makeIntegerParam("ntree",lower=100,upper=400),
   makeIntegerParam("mtry", lower = mtry_min, upper = mtry_max),
-  makeIntegerParam("numRandomCuts", lower = 1, upper = 5)
+  makeIntegerParam("numRandomCuts", lower = 1, upper = 3)
 )
 
 des = generateDesign(n = 20, par.set = extratrees_params)
