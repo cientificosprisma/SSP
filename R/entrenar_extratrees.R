@@ -12,16 +12,35 @@ library(dplyr)
 library(mlrMBO)
 library(ranger)
 library(data.table)
+library(stringr)
 
 set.seed(12112016)
 
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
-cod_mes = 201801
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+
+tipo_clase <- args[1]
+cod_mes <- args[2]
+
+if (tipo_clase == 1){
+  path <- dir_performance_modelos_pruebas_tipo_clase_1
+} else{
+  path <- dir_performance_modelos_pruebas_tipo_clase_2
+}
 
 ### Importamos archivo ------------------------------------------------------
-df <- read_info("input_modelo_historia_g2.csv","historia", 10000,strings_as_factors=FALSE)
+
+if (tipo_clase == 1){
+  tbl <- paste0("input_modelo_historia_g",tipo_clase,".csv", 2000000)
+  df <- read_info(tbl,"historia")
+} else{
+  tbl <- paste0("input_modelo_historia_g",tipo_clase,".csv")
+  df <- read_info(tbl,"historia")
+}
+
 excluded_factors <- c("Cod_Tipo_Identificacion_Host", "Cod_Banco", "Cod_Estado_Cuenta","Cod_Limite_Compra",
                       "Cod_Region_Geografica_Host", "Cod_Grupo_Afinidad", "Cod_Modelo_Liquidacion")
 
@@ -33,7 +52,7 @@ df <- df %>% rename(clase = clase_veraz)
 df <- map_factors(df)
 df[is.na(df)]<-(-99999)
 df$clase <- as.factor(df$clase)
-colnames(dt) <- str_replace(colnames(dt),"\\$","__")
+colnames(df) <- str_replace(colnames(df),"\\$","__")
 
 # Partimos en train y test ------------------------------------------------
 df <- get_train_test(df)
@@ -111,9 +130,7 @@ et_tune <-
 
 opt_results <- as.data.frame(et_tune$opt.path)
 
-#str(df)
-
-write.csv(opt_results, paste0(dir_performance_modelos_pruebas,"extratrees.csv"), row.names = FALSE)
+write.csv(opt_results, paste0(path,"xgboost_pruebas_completas_", cod_mes,".csv"), row.names = FALSE)
 
 # Elijo los mejores parametros y entreno--------------------------------------------
 
@@ -137,4 +154,4 @@ measures[3] <- ks(d$data$tpr,d$data$fpr)
 names(measures)[3] <- "ks"
 
 # guardo resultados
-write.csv(measures, paste0(dir_performance_modelos_pruebas,"extratrees_measures_", cod_mes,".csv"), row.names = FALSE)
+write.csv(measures, paste0(path,"extratrees_measures_", cod_mes,".csv"), row.names = FALSE)

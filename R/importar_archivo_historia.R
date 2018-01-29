@@ -11,12 +11,6 @@ library(data.table)
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
-args <- commandArgs(trailingOnly=TRUE)
-cod_banco <- args[1]
-cod_mes <- args[2]
-
-print(args)
-
 query<- paste0("select * from d_cientificos_datos.vs_input_modelo_hist_v where tipo_clase=1")
 
 input_modelo <- get_query(query = query , "TD")
