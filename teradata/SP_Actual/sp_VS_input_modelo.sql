@@ -1,4 +1,4 @@
-REPLACE PROCEDURE d_cientificos_datos.sp_VS_input_modelo(cod_mes SMALLINT, cod_banco SMALLINT)
+REPLACE PROCEDURE d_cientificos_datos.sp_VS_input_modelo(cod_mes INTEGER, cod_banco SMALLINT)
 BEGIN
 	
 -- Esta query arma la tabla final que va a emplear el modelo
@@ -42,4 +42,3 @@ COLLECT STAT ON d_cientificos_datos.VS_input_modelo INDEX ( Cod_Mes ,Nro_Cuenta 
 
 
 END;
-

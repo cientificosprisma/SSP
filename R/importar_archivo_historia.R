@@ -17,19 +17,11 @@ cod_mes <- args[2]
 
 print(args)
 
-query<- paste0("select * from d_cientificos_datos.vs_input_modelo_hist_v where tipo_clase=1")
+query<- paste0("select * from d_cientificos_datos.vs_input_modelo_v")
 
 input_modelo <- get_query(query = query , "TD")
 
 # Escribo el archivo ------------------------------------------------------
 
-fwrite(input_modelo, paste0(dir_info_historia,"input_modelo_historia_g1.csv"))
-
-query<- paste0("select * from d_cientificos_datos.vs_input_modelo_hist_v where tipo_clase=2")
-
-input_modelo <- get_query(query = query , "TD")
-
-# Escribo el archivo ------------------------------------------------------
-
-fwrite(input_modelo, paste0(dir_info_historia,"input_modelo_historia_g2.csv"))
+fwrite(input_modelo, paste0(dir_info_historia,"input_modelo_historia.csv"))
 
