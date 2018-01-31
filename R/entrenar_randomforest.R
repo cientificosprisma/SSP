@@ -22,7 +22,7 @@ source("/home/Compartida_CD_GI/d_visa_scoring/scripts/basicos.R")
 source("/home/Compartida_CD_GI/d_visa_scoring/scripts/funciones.R")
 
 # Importamos archivo ------------------------------------------------------
-df <- read_info("input_modelo_historia_g2.csv","historia", 2000000,strings_as_factors=FALSE)
+df <- read_info("input_modelo_historia_g1.csv","historia", 2000000,strings_as_factors=FALSE)
 df <- df %>% select(-c(clase_cp_1, clase_cp_2, clase_lp_1, clase_lp_2))
 df <- df %>% rename(clase = clase_veraz)
 df[is.na(df)]<-(-99999)
@@ -103,23 +103,24 @@ sampling_method = makeFixedHoldoutInstance(train_inds, test_inds, nrow(df))
 
 randomforest_learner <- makeLearner("classif.ranger", predict.type = "prob",fix.factors.prediction = TRUE)
 
-randomforest_learner$par.vals<- list(num.threads =6 )
+randomforest_learner$par.vals<- list(num.threads =4 )
 
-
+low_mtry<-round(ncol(df)*0.2)
+upp_mtry<-round(ncol(df)*0.9)
 
 #randomforest_learner$par.set
 randomforest_params <- makeParamSet(
-  makeIntegerParam("num.trees",lower=400,upper=650),
-  makeIntegerParam("mtry", lower = 6, upper = 26, default = 15)
+  makeIntegerParam("num.trees",lower=400,upper=750),
+  makeIntegerParam("mtry", lower = low_mtry, upper = upp_mtry)
   )
 
-des = generateDesign(n = 20, par.set = randomforest_params)
+des = generateDesign(n = 15, par.set = randomforest_params)
 
 # Setting control object for MBO optimization  - Bayesian optimization (aka model based optimization)
- mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,30,40),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_.RData"))
+ mbo_control <- makeMBOControl(save.on.disk.at = c(10,25,31,36),save.file.path = paste0(dir_performance_modelos_pruebas,"randomforest_parametros_.RData"))
 #mbo_control <- makeMBOControl()
 # Extends an MBO control object with infill criteria and infill optimizer options
-mbo_control <- setMBOControlTermination(mbo_control, iters = 40)
+mbo_control <- setMBOControlTermination(mbo_control, iters = 35)
 
 # Defining surrogate learner
 surrogate_lrn <- makeLearner("regr.km", predict.type = "se")
@@ -169,10 +170,12 @@ test<-lookupea_factores(test,factores)
 train<-a_factor(train,lista_col =factores_nominales ,orden = FALSE)
 train<-a_factor(train,lista_col =factores_ordinales ,orden = TRUE)
 
-
-
-
-
+#ver hyperparametros probados y su resultado
+#View(as.data.frame(opt.state$opt.path))
+#eleccion manual de hyperparametros
+#rf_tune<-randomforest_learner$par.vals<- list(mtry=26,num.trees=600)
+#seteo manual de hyperparametros
+#rf_new <- setHyperPars(learner = randomforest_learner, par.vals = rf_tune)
 
 rf_new <- setHyperPars(learner = randomforest_learner, par.vals = rf_tune$x)
 train_task <- makeClassifTask(data = train, target = "clase" ,fixup.data = "no")
