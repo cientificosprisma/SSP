@@ -500,3 +500,21 @@ lookupea_factores<- function(X,factor_list){
   X[is.na(X)]<-"__NAs__"
   return(X)
 }
+<<<<<<< HEAD
+add_na_elem<-function(a){
+ return( c(a,"__NAs__"))
+  
+}
+
+# Funcion que calcula el AUC dadas las proba y clase
+fastAUC <- function(probs, class) {
+  x <- probs
+  y <- class
+  x1 = x[y==1]; n1 = length(x1); 
+  x2 = x[y==0]; n2 = length(x2);
+  r = rank(c(x1,x2))  
+  auc = (sum(r[1:n1]) - n1*(n1+1)/2) / n1 / n2
+  return(auc)
+}
+=======
+>>>>>>> fa49fb77ed90c85148d2de3e3d475d77d76483c6
