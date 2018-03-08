@@ -43,7 +43,7 @@ rm(test)
 gc()
 
 df <- map_factors(df)
-df <- get_xgboost_matrix(df)
+df <- get_xgboost_matrix(df,entrenamiento = TRUE)
 gc()
 
 # Task, Learner, metodo de sampleo --------------------------------------------------------------

@@ -85,7 +85,7 @@ map_factors <- function(df){
 
 # Funcion que genera la matriz para xgboost -------------------------------
 
-get_xgboost_matrix <- function(df){
+get_xgboost_matrix <- function(df, entrenamiento=FALSE){
 
   # partition es == 1 si se splitea en train y test y partition == 2 si se splitea en train, test y calibration
     
@@ -94,15 +94,19 @@ get_xgboost_matrix <- function(df){
     dt <- as.data.table(df)
     
     ## Me quedo con los is.na(clase) == FALSE
-    
+   
+     if(entrenamiento){
     dt <- dt[is.na(clase) == FALSE]
+    }
     
     colnames(dt) <- str_replace(colnames(dt),"\\$","__")
     
     dt <- dt[,lapply(.SD,as.numeric)] %>% as.matrix
     
     dt <- as.data.frame(dt)
+    if(entrenamiento){
     dt$clase <- as.factor(dt$clase)
+    }
     
     return(dt)
 
